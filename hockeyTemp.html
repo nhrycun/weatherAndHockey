@@ -1,0 +1,41 @@
+<!DOCTYPE html>
+<html>
+<head>
+	<title>My Weather and Hockey Page</title>
+	<script src="https://code.jquery.com/jquery-3.6.0.min.js"></script>
+	<script>
+		$(document).ready(function(){
+			$.get("https://www.wunderground.com/dashboard/pws/IEDMON27", function(data){
+				var temperature = $(data).find(".wu-value-to").first().text();
+				temperature = (temperature - 32) * 5/9; // Convert from Fahrenheit to Celsius
+				$("#temperature").html(temperature.toFixed(1) + " &deg;C");
+			});
+
+			$.getJSON("https://statsapi.web.nhl.com/api/v1/schedule?teamId=22&startDate=2023-04-21&endDate=2023-04-21", function(data){
+				var game = data.dates[0].games[0];
+				var homeTeam = game.teams.home.team.name;
+				var homeScore = game.teams.home.score;
+				var awayTeam = game.teams.away.team.name;
+				var awayScore = game.teams.away.score;
+				var score = awayTeam + " " + awayScore + " - " + homeScore + " " + homeTeam;
+				$("#hockey-score").html(score);
+                var time = game.gameDate;
+                <!-- change time to mountain standard time and to 12 hour clock-->
+                var MST_time = new Date(time).toLocaleString("en-US", {timeZone: "America/Edmonton", hour: 'numeric', minute: 'numeric', hour12: true});
+                $("#hockey-time").html(MST_time);
+
+			});
+		});
+	</script>
+</head>
+<body>
+	<h1>Current Weather and Hockey Score</h1>
+	<h2>The current temperature is: 
+        <h3><span id="temperature"></span></h3></h2>
+	<h2>Edmonton Oilers hockey game score is: </h2>
+    <h3><span id="hockey-score"></span></h3>
+    <h2>Game time is: </h2>
+    <h3><span id="hockey-time"></span></h3>
+
+</body>
+</html>
